@@ -1,0 +1,78 @@
+# 工作流名称（在 GitHub Actions 页面显示）
+name: Auto Render PlantUML & ZenUML (Mermaid)
+
+# 触发条件：推送代码到 main 分支、提 PR 到 main 分支时执行
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - '**.md'  # 仅当 Markdown 文件修改时触发，减少不必要的执行
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - '**.md'
+
+# 定义任务
+jobs:
+  render-diagrams:
+    # 运行环境：Ubuntu 最新版
+    runs-on: ubuntu-latest
+    # 设置权限（允许提交代码到仓库）
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      # 步骤 1：拉取仓库代码到 Actions 服务器
+      - name: Checkout Repository Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 拉取完整历史，避免提交冲突
+
+      # 步骤 2：安装 PlantUML 依赖（Java 是 PlantUML 运行必需）
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 步骤 3：渲染 PlantUML 为图片（PNG/SVG）
+      - name: Render PlantUML Diagrams
+        uses: plantuml/plantuml-github-action@master
+        with:
+          # 核心参数：
+          # -v：显示详细日志（排错用）
+          # -o：输出目录（自动创建，存放生成的图片）
+          # 最后是要扫描的 Markdown 文件路径（** 表示所有子目录）
+          args: -v -o ./docs/images/plantuml/ ./**/*.md
+          # 可选：自定义 PlantUML 配置（如主题）
+          # config: ./plantuml-config.txt
+
+      # 步骤 4：渲染 ZenUML (Mermaid 扩展) 为图片
+      - name: Render ZenUML (Mermaid) Diagrams
+        uses: neenjaw/mermaid-to-image-action@v2
+        with:
+          # 要扫描的 Markdown 文件路径
+          input-files: ./**/*.md
+          # 输出目录（和 PlantUML 分开，便于管理）
+          output-dir: ./docs/images/mermaid
+          # Mermaid 版本（指定稳定版，避免兼容问题）
+          mermaid-version: 10.6.1
+          # 图片格式（支持 png/svg/webp）
+          output-format: png
+          # 图片宽度（按需调整）
+          width: 800
+
+      # 步骤 5：自动提交生成的图片到仓库
+      - name: Commit Rendered Images
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          # 提交信息（便于识别）
+          commit_message: "chore: auto render PlantUML/ZenUML diagrams"
+          # 仅提交图片文件，避免修改其他文件
+          file_pattern: "docs/images/**/*"
+          # 提交者信息（可自定义）
+          commit_user_name: "GitHub Actions"
+          commit_user_email: "actions@github.com"
+          # 推送到当前分支
+          push_options: "--force-with-lease"
