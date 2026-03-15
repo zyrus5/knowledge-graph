@@ -4,11 +4,11 @@ name: Auto Render PlantUML & ZenUML (Mermaid)
 # 触发条件：推送代码到 main 分支、提 PR 到 main 分支时执行
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - '**.md'  # 仅当 Markdown 文件修改时触发，减少不必要的执行
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - '**.md'
 
