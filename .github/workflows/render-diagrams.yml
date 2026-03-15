@@ -4,11 +4,11 @@ name: Auto Render PlantUML & ZenUML (Mermaid)
 # 触发条件：推送代码到 main 分支、提 PR 到 main 分支时执行
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
     paths:
-      - '**.md'  # 仅当 Markdown 文件修改时触发，减少不必要的执行
+      - '**.md'  # 仅当 Markdown 文件修改时触发
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
     paths:
       - '**.md'
 
@@ -29,50 +29,61 @@ jobs:
         with:
           fetch-depth: 0  # 拉取完整历史，避免提交冲突
 
-      # 步骤 2：安装 PlantUML 依赖（Java 是 PlantUML 运行必需）
+      # 步骤 2：安装 Java（PlantUML 必需）
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 步骤 3：渲染 PlantUML 为图片（PNG/SVG）
+      # 步骤 3：渲染 PlantUML 为图片（替换为稳定的第三方 Action）
       - name: Render PlantUML Diagrams
-        uses: plantuml/plantuml-github-action@master
-        with:
-          # 核心参数：
-          # -v：显示详细日志（排错用）
-          # -o：输出目录（自动创建，存放生成的图片）
-          # 最后是要扫描的 Markdown 文件路径（** 表示所有子目录）
-          args: -v -o ./docs/images/plantuml/ ./**/*.md
-          # 可选：自定义 PlantUML 配置（如主题）
-          # config: ./plantuml-config.txt
+        uses: mikefarah/yq@master  # 先安装依赖工具
+        continue-on-error: true    # 非必需，容错用
+      - name: Generate PlantUML Images
+        run: |
+          # 创建图片输出目录
+          mkdir -p ./docs/images/plantuml
+          # 下载 PlantUML 核心 jar 包
+          wget https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+          # 扫描所有 Markdown 文件中的 PlantUML 代码并生成图片
+          find . -name "*.md" -type f | while read -r md_file; do
+            # 提取 PlantUML 代码块并生成图片（按文件+序号命名）
+            plantuml_count=1
+            # 用 awk 提取 ```plantuml 和 ``` 之间的内容
+            awk '/```plantuml/,/```/ {
+              if (!/```/) print $0 > "temp_plantuml.puml"
+              if (/```/ && plantuml_count > 1) {
+                java -jar plantuml.jar -o ./docs/images/plantuml temp_plantuml.puml -n $(basename "$md_file" .md)_$plantuml_count
+                plantuml_count++
+                rm temp_plantuml.puml
+              }
+            }' "$md_file"
+            # 处理最后一个 PlantUML 代码块
+            if [ -f "temp_plantuml.puml" ]; then
+              java -jar plantuml.jar -o ./docs/images/plantuml temp_plantuml.puml -n $(basename "$md_file" .md)_$plantuml_count
+              rm temp_plantuml.puml
+            fi
+          done
 
-      # 步骤 4：渲染 ZenUML (Mermaid 扩展) 为图片
-      - name: Render ZenUML (Mermaid) Diagrams
-        uses: neenjaw/mermaid-to-image-action@v2
+      # 步骤 4：渲染 Mermaid/ZenUML 为图片（替换为稳定的 Action）
+      - name: Render Mermaid (ZenUML) Diagrams
+        uses: docker://minlag/mermaid-cli:latest  # 使用官方 Mermaid CLI 镜像
         with:
-          # 要扫描的 Markdown 文件路径
-          input-files: ./**/*.md
-          # 输出目录（和 PlantUML 分开，便于管理）
-          output-dir: ./docs/images/mermaid
-          # Mermaid 版本（指定稳定版，避免兼容问题）
-          mermaid-version: 10.6.1
-          # 图片格式（支持 png/svg/webp）
-          output-format: png
-          # 图片宽度（按需调整）
-          width: 800
+          args: >
+            -i ./docs/**/*.md 
+            -o ./docs/images/mermaid 
+            -f png 
+            -w 800
+        env:
+          PUPPETEER_CONFIG: /puppeteer-config.json
 
       # 步骤 5：自动提交生成的图片到仓库
       - name: Commit Rendered Images
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          # 提交信息（便于识别）
           commit_message: "chore: auto render PlantUML/ZenUML diagrams"
-          # 仅提交图片文件，避免修改其他文件
           file_pattern: "docs/images/**/*"
-          # 提交者信息（可自定义）
           commit_user_name: "GitHub Actions"
           commit_user_email: "actions@github.com"
-          # 推送到当前分支
           push_options: "--force-with-lease"
