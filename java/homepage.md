@@ -23,7 +23,6 @@
 | Spring整合 | 良好，starter | 优秀，注解配置      | 简单                | 良好，starter |
 | 轻量级      | 中大型        | 极轻量          | 极轻量               | 较轻量        |
 
-
 ## 状态机
 
 * spring-statemachine
