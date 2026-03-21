@@ -1,4 +1,5 @@
 <!-- TOC -->
+
 * [自动化测试](#自动化测试)
   * [WEB - Selenium](#web---selenium)
   * [概述](#概述)
@@ -13,6 +14,7 @@
       * [POM-页面对象模型](#pom-页面对象模型)
       * [KDT-关键字驱动模型](#kdt-关键字驱动模型)
   * [APP - Appium](#app---appium)
+
 <!-- TOC -->
 
 # 自动化测试
@@ -128,5 +130,18 @@ def test_login(selenium):  # 因为依赖了pytest-selenium，可以直接使用
 * 核心思想
   * 将数据与逻辑分离，把`selenium`操作抽象成关键字
   * 这样测试人员完全不需要关注代码，非开发人员也可以维护测试用例
+
+#### allure
+
+* allure 是目前主流的测试报告工具，支持步骤展示、用例分类、失败截图 / 日志、趋势分析，报告可交互性极强。
+* 工程引入依赖：`uv add --dev allure-pytest`
+* 执行用例并生成报告：`uv run pytest 登录 --driver chrome -v --alluredir=allure-results`
+* allure
+  * 安装：
+    * macOS：`brew install allure`
+  * 使用
+    * 方式1: 执行`allure generate allure-results -o allure-report --clean`生成静态HTML报告
+    * 方式2: 启动本地服务打开报告`allure serve allure-results`
+      * 默认地址：[http://127.0.0.1:5252](http://127.0.0.1:5252)
 
 ## APP - Appium
