@@ -12,7 +12,7 @@
     * [与`pytest`集成](#与pytest集成)
       * [POM-页面对象模型](#pom-页面对象模型)
       * [KDT-关键字驱动模型](#kdt-关键字驱动模型)
-      * [allure](#allure)
+      * [Allure](#allure)
   * [APP - Appium](#app---appium)
 <!-- TOC -->
 
@@ -130,7 +130,7 @@ def test_login(selenium):  # 因为依赖了pytest-selenium，可以直接使用
   * 将数据与逻辑分离，把`selenium`操作抽象成关键字
   * 这样测试人员完全不需要关注代码，非开发人员也可以维护测试用例
 
-#### allure
+#### Allure
 
 * allure 是目前主流的测试报告工具，支持步骤展示、用例分类、失败截图 / 日志、趋势分析，报告可交互性极强。
 * 工程引入依赖：`uv add --dev allure-pytest`
