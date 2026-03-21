@@ -1,5 +1,4 @@
 <!-- TOC -->
-
 * [自动化测试](#自动化测试)
   * [WEB - Selenium](#web---selenium)
   * [概述](#概述)
@@ -13,8 +12,8 @@
     * [与`pytest`集成](#与pytest集成)
       * [POM-页面对象模型](#pom-页面对象模型)
       * [KDT-关键字驱动模型](#kdt-关键字驱动模型)
+      * [allure](#allure)
   * [APP - Appium](#app---appium)
-
 <!-- TOC -->
 
 # 自动化测试
