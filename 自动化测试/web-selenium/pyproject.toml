@@ -1,0 +1,15 @@
+[project]
+name = "web-selenium"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pytest-selenium>=4.1.0",
+    "selenium>=4.41.0",
+]
+
+[dependency-groups]
+dev = [
+    "ptest>=2.0.3",
+]

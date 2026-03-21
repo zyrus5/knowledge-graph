@@ -15,6 +15,7 @@
 * [AI](ai/homepage.md)
 * [Algorithm](algorithm/homepage.md)
 * [架构](架构/homepage.md)
+* [自动化测试](自动化测试/homepage.md)
 
 ## 查缺补漏
 
@@ -23,9 +24,8 @@
 ## 杂项
 
 * nginx图形化界面
-  * https://nginxproxymanager.com/
-  * https://nginxui.com/zh_CN/
-
+    * https://nginxproxymanager.com/
+    * https://nginxui.com/zh_CN/
 
 ## 附录
 
