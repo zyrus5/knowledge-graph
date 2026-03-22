@@ -1,5 +1,4 @@
 <!-- TOC -->
-
 * [环境搭建](#环境搭建)
 * [用例结果说明](#用例结果说明)
 * [命令](#命令)
@@ -8,7 +7,9 @@
   * [框架内置标记](#框架内置标记)
 * [fixture](#fixture)
   * [高级用法](#高级用法)
-
+* [插件](#插件)
+  * [插件管理](#插件管理)
+  * [常用插件](#常用插件)
 <!-- TOC -->
 
 # 环境搭建
@@ -138,3 +139,41 @@ def f2_share():
     * module
     * class
   * [示例](testcase/test_003_fixture.py)
+
+# 插件
+
+## 插件管理
+
+* 通过`-p`指定启用/禁用插件
+  * 启用
+    * 示例：`uv run pytest --html=report.html`
+  * 禁用
+    * 示例：`uv run pytest --html=report.html -p no:html`
+* 插件使用方式
+  * 参数方式
+  * 配置文件
+    * 在`pytest.ini`文件中增加`addopts = 插件参数`
+    * [示例](testcase/pytest.ini)
+  * fixture
+  * 标记
+
+## 常用插件
+
+* pytest-html
+  * 生成测试报告
+  * 示例：`uv run pytest --html=report.html`
+* pytest-xdist
+  * 分布式执行，将不同的用例分配给不同的进程执行
+  * 参数：
+    * `-n`: 指定进程数
+  * 示例：`uv run pytest -n 3`
+* pytest-rerunfailures
+  * 用例失败之后重新执行
+  * 参数：
+    * `--reruns` 重新执行的次数
+    * `--reruns-delay` 重试的间隔，单位秒
+  * 示例：`uv run pytest --reruns 5 --reruns-delay 3`
+* pytest-result-log
+  * 将用例的执行结果记录到日志文件
+  * 参数：
+  * 示例：`
