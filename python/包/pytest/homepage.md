@@ -10,6 +10,8 @@
 * [插件](#插件)
   * [插件管理](#插件管理)
   * [常用插件](#常用插件)
+* [Allure](#allure)
+  * [装饰器](#装饰器)
 <!-- TOC -->
 
 # 环境搭建
@@ -162,6 +164,7 @@ def f2_share():
 * pytest-html
   * 生成测试报告
   * 示例：`uv run pytest --html=report.html`
+  * 插件已经被 [allure](#allure) 替代
 * pytest-xdist
   * 分布式执行，将不同的用例分配给不同的进程执行
   * 参数：
@@ -176,4 +179,27 @@ def f2_share():
 * pytest-result-log
   * 将用例的执行结果记录到日志文件
   * 参数：
-  * 示例：`
+  * 示例：
+
+# Allure
+
+* allure 是目前主流的测试报告工具，支持步骤展示、用例分类、失败截图 / 日志、趋势分析，报告可交互性极强。
+* allure
+  * 安装：
+    * macOS：`brew install allure`
+  * 使用
+    * 方式1: 执行`allure generate allure-results -o allure-report --clean`生成静态HTML报告
+    * 方式2: 启动本地服务打开报告`allure serve allure-results`
+      * 默认地址：[http://127.0.0.1:5252](http://127.0.0.1:5252)
+
+## 装饰器
+
+* `@allure.epic`
+  * 项目
+* `@allure.feature`
+  * 模块
+* `@allure.story`
+  * 功能
+* `@allure.title`
+  * 用例
+* [示例](testcase/test_004_allure.py)
